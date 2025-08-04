@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import connectDb from './config/db.js';
 import morgan from 'morgan';
 import authRoute from "./routers/authRoutes.js"
+import { isAdmin, requireSignIn } from './middlewares/authMiddleware.js';
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.json());
 
 //routes 
 app.use("/api/v1/auth",authRoute)
+
 
 
 

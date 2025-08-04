@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      lowercase: true // helps normalize for lookup
+      // lowercase: true // helps normalize for lookup
     },
     address: {
       type: String,

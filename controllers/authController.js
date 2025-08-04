@@ -1,68 +1,11 @@
-// import { hashPassword } from "../helpers/authHelper.js";
-// import userModel from "../models/userModel.js"
-// export const registerController = async (req, res) => {
-//     try {
-//         const { name, email, password, address, phone } = req.body;
-//         if (!name) {
-//             return res.send({
-//                 error: "name is required"
-//             })
-//         }
-//         if (!password) {
-//             return res.send({
-//                 error: "Pasword is required"
-//             })
-//         }
-//         if (!email) {
-//             return res.send({
-//                 error: "Email is required"
-//             })
-//         }
-//         if (!address) {
-//             return res.send({
-//                 error: "Addres is required"
-//             })
-//         }
-//         if (!phone) {
-//             return res.send({
-//                 error: "Phone no is required"
-//             })
-//         }
 
-//         const existedUser = await userModel.findOne({ email });
-//         if (existedUser) {
-//             res.status(200).send({
-//                 success: true,
-//                 message: "USer alreay signed up Youe may try to login with this "
-//             })
-//         }
-//         const hashedPassword = hashPassword(password);
-
-//         const user = await new userModel({ name,phone, email, address, password: hashedPassword }).save()
-//         res.status(201).send({
-//             success: true,
-//             message: "User registered succesfully",
-//             user
-//         })
-//     }
-//     catch (error) {
-//         console.log(error)
-//         res.status(500).send({
-//             message: "Error in regitration",
-//             success: false,
-//             error
-
-//         })
-//     }
-// };
-
-
-import { hashPassword } from "../helpers/authHelper.js";
+import { comparePassword, hashPassword } from "../helpers/authHelper.js";
 import userModel from "../models/userModel.js";
+import JWT from 'jsonwebtoken'
 
 export const registerController = async (req, res) => {
     try {
-        const { name, password, email, address, phone } = req.body; // ✅ corrected: phonee ➝ phone
+        const { name, password, email, address, phone } = req.body; 
 
         // Validation
         if (!name) {
@@ -82,10 +25,10 @@ export const registerController = async (req, res) => {
         }
 
         // Check if user already exists
-        const existedUser = await userModel.findOne({ email }); // ✅ added await
+        const existedUser = await userModel.findOne({ email }); 
         if (existedUser) {
-            return res.status(200).send({ // ✅ added return
-                success: false, // ❌ fixed: it should be false (user already exists is not a success)
+            return res.status(200).send({ 
+                success: false, 
                 message: "User already signed up. You may try to login."
             });
         }
@@ -118,3 +61,66 @@ export const registerController = async (req, res) => {
         });
     }
 };
+
+
+export const loginController = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).send({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      console.log("Email not found");
+      return res.status(401).send({
+        success: false,
+        message: "Email not found",
+      });
+    }
+
+    const isMatch = await comparePassword(password, user.password);
+
+    if (!isMatch) {
+      console.log("Password is incorrect");
+      return res.status(401).send({
+        success: false,
+        message: "Password is incorrect",
+      });
+    }
+
+    const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return res.status(200).send({
+      success: true,
+      message: "Login successfully",
+      user: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+      },
+      token,
+    });
+  } catch (error) {
+    console.error("Login Error:", error);
+    return res.status(500).send({
+      success: false,
+      message: "Login failed",
+      error,
+    });
+  }
+};
+
+
+// testing middleware
+export const hello = async (req, res) => {
+    res.send("protected")
+}

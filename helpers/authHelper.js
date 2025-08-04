@@ -8,7 +8,6 @@ export const hashPassword = async (password) => {
     }
     catch (error) {
         console.log(error)
-
     }
 }
 
