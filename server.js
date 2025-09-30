@@ -4,8 +4,8 @@ import dotenv from 'dotenv'
 import connectDb from './config/db.js';
 import morgan from 'morgan';
 import authRoute from "./routers/authRoutes.js"
-import { isAdmin, requireSignIn } from './middlewares/authMiddleware.js';
-
+// import { isAdmin, requireSignIn } from './middlewares/authMiddleware.js';
+import cors from "cors";
 
 const app = express();
 
@@ -20,6 +20,7 @@ function greet(nmae) {
 }
 
 //middleware
+app.use(cors());
 app.use(morgan("dev"))
 app.use(express.json());
 

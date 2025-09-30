@@ -1,13 +1,17 @@
 import express from "express"
-import {registerController,loginController, hello} from "../controllers/authController.js"
+import { registerController, loginController, hello, forgotPasswordController } from "../controllers/authController.js"
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
-const router=express.Router();
+const router = express.Router();
 
 //this line means when user register then regiatercontroller method get executd
 
-router.post("/register",registerController)
-router.post("/login",loginController)
-router.get("/test",requireSignIn,isAdmin,hello)
+router.post("/register", registerController)
+router.post("/login", loginController)
+router.post("/forgot-password", forgotPasswordController)
+router.get("/test", requireSignIn, isAdmin, hello)
+router.get("/auth-user", requireSignIn, ((req, res) => {
+    res.status(200).send({ ok: true });
+}))
 
 export default router;
