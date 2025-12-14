@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
       // lowercase: true // helps normalize for lookup
     },
     address: {
-      type: String,
+      type: {},
       required: true
     },
     phone: { // ✅ Fixed: changed from `phonee` to `phone`

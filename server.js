@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 import connectDb from './config/db.js';
 import morgan from 'morgan';
 import authRoute from "./routers/authRoutes.js"
+import productRoutes from "./routers/productRoutes.js"
+import categoryRoutes from "./routers/categoryRoutes.js"
 // import { isAdmin, requireSignIn } from './middlewares/authMiddleware.js';
 import cors from "cors";
 
@@ -27,6 +29,8 @@ app.use(express.json());
 
 //routes 
 app.use("/api/v1/auth",authRoute)
+app.use("/api/v1/category",categoryRoutes)
+app.use("/api/v1/product",productRoutes)
 
 
 

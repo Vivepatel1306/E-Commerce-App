@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import {useEffect, useState } from 'react'
 import { useAuth } from '../context/auth'
 import Spinner from '../Spinner'
 import axios from 'axios'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import {  Outlet  } from 'react-router-dom'
 export default function PrivateRoute ()  {
     const [ok, setok] = useState(false)
     const [auth, setAuth] = useAuth()
-      const location = useLocation();
     useEffect(() => {
         const authCheck = async () => {
-            const res = await axios.get("api/v1/auth/auth-user");
+            const res = await axios.get("/api/v1/auth/auth-user");
             if (res.data.ok) {
                 setok(true)
             }
@@ -20,7 +19,7 @@ export default function PrivateRoute ()  {
         if (auth?.token) {
             
             authCheck()
-        return <Navigate to="/login" state={{ from: location }} replace />;
+        // return <Navigate to="/login" state={{ from: location }} replace />;
   
         }
     },[auth?.token]);
